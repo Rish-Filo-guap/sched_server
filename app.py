@@ -10,7 +10,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Создаем папку uploads, если ее нет
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-@app.route('/')
+@app.route()
 def query_example():
     return '<h1> hello </h1>'
 
