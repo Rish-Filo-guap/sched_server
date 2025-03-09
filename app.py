@@ -10,8 +10,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Создаем папку uploads, если ее нет
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+@app.route('/')
+def query_example():
+    return '<h1> hello </h1>'
 
-@app.route('/<filename>', methods=['GET', 'POST'])
+@app.route('/add_schedule/<filename>', methods=['GET', 'POST'])
 def manage_file(filename):
     """
     Обрабатывает GET-запросы для скачивания файла и POST-запросы для загрузки файла.
