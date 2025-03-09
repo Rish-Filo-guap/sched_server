@@ -11,7 +11,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-@app.route('/file/<filename>', methods=['GET', 'POST'])
+@app.route('/<filename>', methods=['GET', 'POST'])
 def manage_file(filename):
     """
     Обрабатывает GET-запросы для скачивания файла и POST-запросы для загрузки файла.
