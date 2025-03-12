@@ -3,6 +3,19 @@ import os
 import os.path
 import shutil
 
+
+def addListFile(filename, type):
+    try:
+        filepathList = os.path.join(app.config['UPLOAD_FOLDER'], 'list_files.txt')
+        with open(filepathList, type) as f:  # "a" означает режим "append" (добавление)
+            if(filename!=''):
+                f.write(filename + "\n")  # Добавляем текст и символ новой строки
+                
+    except Exception as e:
+        return jsonify({'error': 'Error add to list names'}), 500
+
+
+
 app = Flask(__name__)
 
 # Папка для хранения файлов (относительно корня проекта)
@@ -16,11 +29,8 @@ if not os.path.exists(UPLOAD_FOLDER):
 @app.route('/delete')
 def query_delete():
     passFL = request.args.get('pass')
-    if(passFL=='1234'):
+    if(passFL=='delallpas'):
         
-
-
-
         try:
             for filename in os.listdir(UPLOAD_FOLDER):
                 file_path = os.path.join(UPLOAD_FOLDER, filename)
@@ -40,7 +50,7 @@ def query_delete():
 
 
 
-
+        addListFile('','w')
         return '<h1> delited </h1>'
     else:
         return '<h1> wrong pass </h1>'
@@ -50,7 +60,12 @@ def query_delete():
 def query_start():
     return '<h1> hello </h1>'
 
+@app.route('/list_files')
+def query_list():
+    filepathList = os.path.join(app.config['UPLOAD_FOLDER'], 'list_files.txt')
+    return send_file(filepathList, as_attachment=True)
 
+        
 
 @app.route('/add_schedule/<filename>', methods=['GET', 'POST'])
 def manage_file(filename):
@@ -79,17 +94,17 @@ def manage_file(filename):
             data = request.get_data(as_text=True) # Получаем данные из тела запроса
             with open(filepath, 'w') as f:
                 f.write(data)
+
+            addListFile(filename, 'a')
+            
+                
+
             return jsonify({'message': 'File uploaded successfully'}), 201
+
         except Exception as e:
             return jsonify({'error': f"Error uploading file: {str(e)}"}), 500
 
 
-def delete_all_files_in_directory(directory):
-    """Удаляет все файлы (и подпапки!) из указанной директории."""
-    
-        #print(f"Ошибка при работе с директорией '{directory}': {e}")
-
-
-
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+
