@@ -2,14 +2,21 @@ from flask import Flask, request, send_file, jsonify
 import os
 import os.path
 import shutil
+import re
 
 
-def addListFile(filename, type):
+def addListFile(filename):
+    
     try:
+        
         filepathList = os.path.join(app.config['UPLOAD_FOLDER'], 'list_files.txt')
-        with open(filepathList, type) as f:  # "a" означает режим "append" (добавление)
-            if(filename!=''):
-                f.write(filename + "\n")  # Добавляем текст и символ новой строки
+        if(filename!=''):
+            with open(filepathList, 'a') as f:  # "a" означает режим "append" (добавление)
+                f.write(filename + "\n") 
+        
+        else:
+            with open(filepathList, 'w') as f:
+                return
                 
     except Exception as e:
         return jsonify({'error': 'Error add to list names'}), 500
@@ -17,7 +24,6 @@ def addListFile(filename, type):
 
 
 app = Flask(__name__)
-
 # Папка для хранения файлов (относительно корня проекта)
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -25,6 +31,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Создаем папку uploads, если ее нет
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+addListFile('')
+
 
 @app.route('/delete')
 def query_delete():
@@ -50,7 +58,7 @@ def query_delete():
 
 
 
-        addListFile('','w')
+        addListFile('')
         return '<h1> delited </h1>'
     else:
         return '<h1> wrong pass </h1>'
@@ -72,7 +80,7 @@ def manage_file(filename):
     """
     Обрабатывает GET-запросы для скачивания файла и POST-запросы для загрузки файла.
     """
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename+'.txt')
 
     if request.method == 'GET':
         """
@@ -95,11 +103,11 @@ def manage_file(filename):
             with open(filepath, 'w') as f:
                 f.write(data)
 
-            addListFile(filename, 'a')
+            addListFile(filename)
             
                 
 
-            return jsonify({'message': 'File uploaded successfully'}), 201
+            return jsonify({'message': 'File uploaded successfully '+filename}), 201
 
         except Exception as e:
             return jsonify({'error': f"Error uploading file: {str(e)}"}), 500
