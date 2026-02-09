@@ -30,8 +30,8 @@ app = Flask(__name__)
 # Папка для хранения файлов (относительно корня проекта)
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://filo:Pas4(sheduledb)@172.17.42.1:1201/shedule_db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://filo:Pas4(sheduledb)@192.168.1.165:1201/shedule_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://filo:Pas4(sheduledb)@127.0.0.1:1201/shedule_db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://filo:Pas4(sheduledb)@192.168.1.165:1201/shedule_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 # Создаем папку uploads, если ее нет
@@ -142,5 +142,5 @@ def manage_file(filename):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=80)
 
