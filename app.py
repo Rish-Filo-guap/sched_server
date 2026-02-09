@@ -3,6 +3,9 @@ import os
 import os.path
 import shutil
 import re
+from flask_sqlalchemy import SQLAlchemy
+
+
 
 
 def addListFile(filename):
@@ -27,11 +30,36 @@ app = Flask(__name__)
 # Папка для хранения файлов (относительно корня проекта)
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://filo:Pas4(sheduledb)@172.17.42.1:1201/shedule_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://filo:Pas4(sheduledb)@192.168.1.165:1201/shedule_db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 # Создаем папку uploads, если ее нет
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 addListFile('')
+
+
+
+class Analytics(db.Model):
+    __tablename__ = 'analytics'
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(10))
+    event = db.Column(db.String(300))
+
+
+@app.route('/analytics', methods=['POST'])
+def add_analytics():
+    data = request.get_data(as_text=True)
+
+    if ':' in data:
+        code, event = data.split(':', 1)
+        record = Analytics(code=code.strip(), event=event.strip())
+        db.session.add(record)
+        db.session.commit()
+
+    return ''
+
 
 
 @app.route('/delete')
